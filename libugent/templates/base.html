@@ -1,0 +1,67 @@
+{% load static wagtailcore_tags i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ request.LANGUAGE_CODE }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}{% endblock %} | {{ site_name }}</title>
+        <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% endif %}">
+
+        {% if page.featured_image %}
+        <meta property="og:image" content="{% static 'media/' %}{{ page.featured_image.file.name }}" />
+        {% endif %}
+
+        {% block extra_css %}
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        {% endblock %}
+    </head>
+
+    <body>
+        {% block header %}
+            <header>
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <div class="container">
+                        <a class="navbar-brand" href="/">UGent Library</a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'wagtail_serve' 'databases'|add:'/' %}">{% trans 'Databases' %}</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'wagtail_serve' 'info'|add:'/' %}">{% trans 'Information' %}</a>
+                                </li>
+                            </ul>
+                            <ul class="navbar-nav ms-auto">
+                                {% get_available_languages as LANGUAGES %}
+                                {% get_language_info_list for LANGUAGES as languages %}
+                                {% for language in languages %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/{{ language.code }}/">{{ language.name_local }}</a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+        {% endblock %}
+
+        <main class="container py-4">
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="bg-light py-4 mt-5">
+            <div class="container">
+                <p>© {% now "Y" %} UGent Library</p>
+            </div>
+        </footer>
+
+        {% block extra_js %}
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        {% endblock %}
+    </body>
+</html>
